@@ -20,6 +20,38 @@ Este repositorio contén unha aplicación de escritorio para xestionar préstamo
 - **React 19** - Interface de usuario
 - **SQLite** - Base de datos embebida
 
+## Capturas de Pantalla
+
+### Panel Principal
+Vista xeral do sistema con estatísticas, préstamos recentes e estado do inventario.
+
+![Panel Principal](reources/dashboard.png)
+
+### Xestión de Usuarias/os
+Lista de usuarios con busca e detalles completos, incluíndo préstamos activos.
+
+![Detalles de Usuario](reources/user-details.png)
+
+### Creación de Préstamos
+Modal intuitivo para seleccionar artigos e crear novos préstamos.
+
+![Novo Préstamo](reources/new-loan-modal.png)
+
+### Lista de Préstamos
+Vista completa de todos os préstamos con filtros por estado e opcións de devolución.
+
+![Lista de Préstamos](reources/loans-list.png)
+
+### Inventario
+Xestión de artigos con control de stock en tempo real por categorías.
+
+![Inventario](reources/inventory.png)
+
+### Informes e Exportación
+Xeración de informes anuais, exportación a Excel e sistema de copias de seguridade.
+
+![Informes](reources/reports.png)
+
 ## Estrutura do Repositorio
 
 ```
@@ -76,52 +108,13 @@ npm run tauri-dev
 npm run tauri-build
 ```
 
-## Características Principais
-
-| Funcionalidade | Descripción |
-|----------------|-------------|
-| Usuarios | Alta, baixa, modificación e busca de usuarios |
-| Artigos | Inventario con control de stock |
-| Préstamos | Rexistro, seguimento e devolucións |
-| Informes | Exportación a Excel e PDF con detalles por usuario |
-| Backups | Sistema automático e manual |
-| Multiusuario | Acceso simultáneo con bloqueo de ficheiros |
-
-## Capturas de Pantalla
-
-### Panel Principal
-Vista xeral do sistema con estatísticas, préstamos recentes e estado do inventario.
-
-![Panel Principal](reources/dashboard.png)
-
-### Xestión de Usuarias/os
-Lista de usuarios con busca e detalles completos, incluíndo préstamos activos.
-
-![Detalles de Usuario](reources/user-details.png)
-
-### Creación de Préstamos
-Modal intuitivo para seleccionar artigos e crear novos préstamos.
-
-![Novo Préstamo](reources/new-loan-modal.png)
-
-### Lista de Préstamos
-Vista completa de todos os préstamos con filtros por estado e opcións de devolución.
-
-![Lista de Préstamos](reources/loans-list.png)
-
-### Inventario
-Xestión de artigos con control de stock en tempo real por categorías.
-
-![Inventario](reources/inventory.png)
-
-### Informes e Exportación
-Xeración de informes anuais, exportación a Excel e sistema de copias de seguridade.
-
-![Informes](reources/reports.png)
-
 ## Licenza
 
-Este é un proxecto de código aberto con fins educativos e de demostración.
+Este proxecto está licenciado baixo a **Licenza Pública Europea da Unión Europea (EUPL v1.2)**.
+
+A EUPL é unha licenza de software libre aprobada pola Comisión Europea, compatible con GPL e outras licenzas de código aberto. Permite o uso, modificación e distribución do código, sempre mantendo a mesma licenza nas obras derivadas.
+
+Máis información: [https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
 
 ---
 
