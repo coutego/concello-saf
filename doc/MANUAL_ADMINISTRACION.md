@@ -12,32 +12,23 @@ Este manual está dirixido ás persoas responsables de administrar a aplicación
 
 A aplicación funciona en:
 - **Windows**: Windows 10 ou superior (64 bits)
-- **macOS**: versión 10.13 (High Sierra) ou superior
-- **Linux**: Ubuntu 18.04+, Debian 10+, ou distribucións equivalentes
 
-### 1.2 Proceso de Instalación
+### 1.2 Despregamento
 
-A instalación é moi sinxela:
+A aplicación é un **executable independente (standalone)** que non require instalación. Simplemente:
 
-1. **Descarga o executable** correspondente ao teu sistema operativo:
-   - Windows: ficheiro `.exe` ou `.msi`
-   - macOS: ficheiro `.dmg`
-   - Linux: ficheiro `.deb` ou `.AppImage`
+1. **Coloca o ficheiro `saf-barreiros-app.exe` nunha localización de rede** accesible para todos os usuarios (por exemplo: `\\SERVIDOR\Aplicacions\SAF\`)
 
-2. **Executa o instalador** e segue os pasos do asistente
+2. **Crea un atallo** nos ordenadores dos usuarios que apunte a esa localización
 
-3. **Na primeira execución**, a aplicación preguntarche onde queres gardar os datos:
-   - Se usas a aplicación nun só ordenador: podes deixar a opción por defecto
-   - Se vais usar varios ordenadores conectados en rede: escolle unha carpeta compartida
+É todo! A aplicación pode executarse directamente desde calquera localización.
 
-### 1.3 Instalación en Rede (Varios Equipos)
+### 1.3 Datos da Aplicación
 
-Se vais usar a aplicación desde varios ordenadores:
+**Na primeira execución**, a aplicación preguntarche onde queres gardar os datos:
 
-1. **Escolle un ordenador principal** onde se gardarán os datos
-2. **Crea unha carpeta compartida** na rede (por exemplo: `\\SERVIDOR\SAF_Datos`)
-3. **Instala a aplicación en cada ordenador**
-4. **Configura todos para usar a mesma carpeta compartida**
+- **Localización recomendada**: Unha carpeta compartida na rede (por exemplo: `\\SERVIDOR\SAF_Datos`)
+- Se vais usar varios ordenadores conectados en rede: todos deben usar a mesma carpeta compartida
 
 **Importante**: Unha vez configurada a carpeta compartida, todos os ordenadores usaran a mesma base de datos.
 

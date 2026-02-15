@@ -66,8 +66,9 @@ saf-tauri-app/
 │   │   └── excel.rs        # Exportación a Excel/PDF
 │   ├── Cargo.toml          # Dependencias Rust
 │   └── tauri.conf.json     # Configuración Tauri
-├── MANUAL_ADMINISTRACION.md    # Manual para administradores
-├── MANUAL_DESENVOLVEMENTO.md   # Manual para desenvolvedores
+├── doc/
+│   ├── MANUAL_ADMINISTRACION.md    # Manual para administradores
+│   └── MANUAL_DESENVOLVEMENTO.md   # Manual para desenvolvedores
 └── package.json            # Dependencias Node.js
 ```
 
@@ -77,7 +78,7 @@ Este repositorio inclúe dous manuais detallados en galego:
 
 ### Para Administradores
 
-📄 **[MANUAL_ADMINISTRACION.md](./MANUAL_ADMINISTRACION.md)**
+📄 **[MANUAL_ADMINISTRACION.md](./doc/MANUAL_ADMINISTRACION.md)**
 
 - Instalación da aplicación
 - Xestión da base de datos SQLite
@@ -87,7 +88,7 @@ Este repositorio inclúe dous manuais detallados en galego:
 
 ### Para Desenvolvedores
 
-📄 **[MANUAL_DESENVOLVEMENTO.md](./MANUAL_DESENVOLVEMENTO.md)**
+📄 **[MANUAL_DESENVOLVEMENTO.md](./doc/MANUAL_DESENVOLVEMENTO.md)**
 
 - Configuración do entorno de desenvolvemento (Windows, Linux, macOS)
 - Compilación desde o código fonte

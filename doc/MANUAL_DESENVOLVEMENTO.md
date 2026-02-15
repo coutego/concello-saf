@@ -357,20 +357,41 @@ A base de datos está en:
 
 ## 7. Distribución
 
-### 7.1 Crear o Instalador
+### 7.1 Compilación mediante GitHub Actions (Recomendado)
 
-Despois de compilar:
+O repositorio inclúe unha GitHub Action que compila automaticamente a aplicación para Windows. Para usala:
+
+1. **Fai fork do repositorio** na túa conta de GitHub
+
+2. **Crea unha rama `release`**:
+   ```bash
+   git checkout -b release
+   git push origin release
+   ```
+
+3. **Executa a acción manualmente**:
+   - Vai á lapela "Actions" no teu repositorio de GitHub
+   - Selecciona "Build Windows"
+   - Fai clic en "Run workflow"
+
+4. **Descarga o executable**:
+   - Cando a acción remate, vai a "Releases" ou "Artifacts"
+   - Descarga o ficheiro `.exe`
+
+Esta é a forma máis sinxela de obter un executable funcional sen ter que configurar un entorno de desenvolvemento local.
+
+### 7.2 Compilación Local
+
+Para compilar localmente:
 
 ```bash
 npm run tauri-build
 ```
 
-Os instaladores están en:
-- **Windows**: ficheiro `.msi` ou `.exe`
-- **macOS**: ficheiro `.dmg`
-- **Linux**: ficheiro `.deb` ou `.AppImage`
+O executable estará en:
+- **Windows**: `src-tauri/target/release/saf-barreiros-app.exe`
 
-### 7.2 Asinar a Aplicación (Opcional)
+### 7.3 Asinar a Aplicación (Opcional)
 
 Para evitar avisos de seguridade:
 
