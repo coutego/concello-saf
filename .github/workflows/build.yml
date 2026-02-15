@@ -1,0 +1,43 @@
+name: 'Build Windows'
+
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'App v__VERSION__'
+          releaseBody: 'See the assets to download and install.'
+          releaseDraft: true
+          prerelease: false
+
+      - name: Upload portable exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: portable-exe
+          path: src-tauri/target/release/*.exe
