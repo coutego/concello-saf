@@ -1,154 +1,128 @@
-# SAF Barreiros - Xestión de Préstamos
+# SAF - Aplicación de Xestión de Préstamos
 
-Aplicación de escritorio para xestionar préstamos de material do Servizo de Axuda ao Fogar (SAF) do Concello de Barreiros.
+> **Nota importante**: Esta é unha aplicación de concepto/demostración e **non está afiliada nin ten relación oficial co Concello de Barreiros**. Trátase dun proxecto de mostra dunha aplicación que podería ser utilizada por un Servizo de Axuda ao Fogar (SAF) para xestionar préstamos de material.
 
-## 🚀 Características
+## Que é este proxecto?
 
-- ✅ Interface moderna e intuitiva en galego
-- ✅ Xestión de usuarios, artigos e préstamos
-- ✅ Búsqueda difusa para usuarios e artigos
-- ✅ Sistema de Event Sourcing (rexistro completo de accións)
-- ✅ Exportación a Excel
-- ✅ Copias de seguridade (backups)
-- ✅ Base de datos SQLite en ficheiro compartido
-- ✅ Funciona offline
-- ✅ Soporte multiplataforma (Windows, macOS, Linux)
+Este repositorio contén unha aplicación de escritorio para xestionar préstamos de material, deseñada como concepto para un Servizo de Axuda ao Fogar. A aplicación permite:
 
-## 📦 Instalación
+- Xestión de usuarios e usuarias
+- Inventario de artigos prestables
+- Rexistro de préstamos e devolucións
+- Exportación de informes a Excel e PDF
+- Sistema de copias de seguridade
+- Interface completamente en galego
 
-### Para usuarios (fácil)
+## Tecnoloxías
 
-1. Descarga o instalador correspondente ao teu sistema operativo desde a sección de releases
-2. Executa o instalador e segue as instrucións
-3. Na primeira execución, selecciona a carpeta onde queres gardar a base de datos (recomendado: carpeta compartida da rede)
-4. Xa podes comezar a usar a aplicación!
+- **Tauri 1.5** - Framework de aplicacións de escritorio
+- **Rust** - Backend e lóxica de negocio
+- **React 19** - Interface de usuario
+- **SQLite** - Base de datos embebida
 
-### Para desenvolvedores
-
-#### Requisitos
-
-- [Node.js](https://nodejs.org/) (v18 ou superior)
-- [Rust](https://www.rust-lang.org/tools/install)
-- [Tauri CLI](https://tauri.app/v1/guides/getting-started/prerequisites)
-
-#### Configuración do proxecto
-
-```bash
-# Clonar o repositorio
-git clone <url-do-repositorio>
-cd saf-tauri-app
-
-# Instalar dependencias de Node
-npm install
-
-# Instalar dependencias de Rust (feito automaticamente)
-```
-
-#### Execución en desenvolvemento
-
-```bash
-# Iniciar a app en modo desenvolvemento
-npm run tauri-dev
-```
-
-#### Compilación para produción
-
-```bash
-# Compilar para a túa plataforma
-npm run tauri-build
-
-# Os binarios estarán en src-tauri/target/release/bundle/
-```
-
-#### Compilación para todas as plataformas
-
-Nota: Para compilar para Windows desde macOS/Linux (ou viceversa), necesitas configurar un runner de GitHub Actions ou usar cross-compilation.
-
-## 🗄️ Base de Datos
-
-A aplicación usa SQLite como base de datos. O ficheiro da base de datos (`saf_database.db`) pódese gardar en calquera localización:
-
-- **Local**: Directorio de datos da aplicación (por defecto)
-- **Carpeta compartida**: Ideal para acceso dende varios equipos da rede
-
-### Estrutura da BD
-
-- **users**: Usuarios do servizo
-- **items**: Artigos dispoñibles para préstamo
-- **loans**: Préstamos (con estados: active, pending, returned, overdue)
-- **loan_items**: Relación préstamo-artigos
-- **events**: Rexistro de eventos (Event Sourcing)
-
-## 🔒 Concurrencia e Bloqueos
-
-A aplicación implementa un sistema de bloqueo de ficheiros para permitir o acceso dende varios equipos simultaneamente:
-
-- Cando un usuario abre a app, adquire un bloqueo sobre a base de datos
-- Se outro usuario intenta acceder mentres está bloqueada, agarda automaticamente
-- Os bloqueos téñen timeout (30 segundos) para evitar bloqueos permanentes en caso de crash
-
-## 📊 Event Sourcing
-
-Todas as accións importantes rexístranse como eventos:
-
-- `USER_CREATED`: Creación de usuario
-- `USER_UPDATED`: Actualización de usuario
-- `LOAN_CREATED`: Novo préstamo
-- `LOAN_RETURNED`: Devolución de préstamo
-- `STOCK_RESERVED`: Reserva de stock
-- `STOCK_RELEASED`: Liberación de stock
-- `BACKUP_CREATED`: Creación de backup
-
-Isto permite:
-- Auditar todas as accións
-- Reconstruír o estado da base de datos
-- Detectar problemas ou erros
-
-## 📁 Estrutura do Proxecto
+## Estrutura do Repositorio
 
 ```
 saf-tauri-app/
-├── src/                    # Código fonte do frontend
-│   ├── main.js            # Lóxica principal e comunicación co backend
-│   └── styles.css         # Estilos CSS
-├── src-tauri/             # Código fonte do backend (Rust)
+├── src/                    # Interface de usuario (React)
+├── src-tauri/              # Backend (Rust)
 │   ├── src/
-│   │   ├── main.rs        # Punto de entrada
-│   │   ├── database.rs    # Operacións coa base de datos
-│   │   ├── models.rs      # Estruturas de datos
-│   │   ├── commands.rs    # Comandos Tauri (API)
-│   │   ├── excel.rs       # Exportación a Excel
-│   │   ├── backup.rs      # Funcións de backup
-│   │   └── lock.rs        # Sistema de bloqueo
-│   ├── Cargo.toml         # Dependencias de Rust
-│   └── tauri.conf.json    # Configuración de Tauri
-├── index.html             # HTML principal
-├── package.json           # Dependencias de Node
-└── vite.config.js         # Configuración de Vite
+│   │   ├── main.rs         # Punto de entrada
+│   │   ├── database.rs     # Operacións de base de datos
+│   │   ├── commands.rs     # API de comandos
+│   │   ├── backup.rs       # Sistema de backups
+│   │   └── excel.rs        # Exportación a Excel/PDF
+│   ├── Cargo.toml          # Dependencias Rust
+│   └── tauri.conf.json     # Configuración Tauri
+├── MANUAL_ADMINISTRACION.md    # Manual para administradores
+├── MANUAL_DESENVOLVEMENTO.md   # Manual para desenvolvedores
+└── package.json            # Dependencias Node.js
 ```
 
-## 🛠️ Tecnoloxías
+## Documentación
 
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Backend**: Rust + Tauri
-- **Base de datos**: SQLite
-- **Exportación**: XLSX Writer (Rust)
-- **Empaquetado**: Tauri
+Este repositorio inclúe dous manuais detallados en galego:
 
-## 📝 Licenza
+### Para Administradores
 
-Este proxecto é propiedade do Concello de Barreiros.
+📄 **[MANUAL_ADMINISTRACION.md](./MANUAL_ADMINISTRACION.md)**
 
-## 🤝 Soporte
+- Instalación da aplicación
+- Xestión da base de datos SQLite
+- Sistema de copias de seguridade (manuais e automáticas)
+- Resolución de problemas comúns
+- Mantemento recomendado
 
-Para reportar problemas ou solicitar funcionalidades, por favor crea un issue no repositorio ou contacta co equipo de soporte do Concello de Barreiros.
+### Para Desenvolvedores
 
-## 🔄 Changelog
+📄 **[MANUAL_DESENVOLVEMENTO.md](./MANUAL_DESENVOLVEMENTO.md)**
 
-### v1.0.0
-- Lanzamento inicial
-- Xestión completa de usuarios, artigos e préstamos
-- Sistema de Event Sourcing
-- Exportación a Excel
-- Backups automáticos
-- Soporte multiplataforma
+- Configuración do entorno de desenvolvemento (Windows, Linux, macOS)
+- Compilación desde o código fonte
+- Estructura do proxecto
+- Como usar OpenCode con modelos avanzados (GLM-5, Claude, Kimi K2.5) para modificar a aplicación
+- Probas e distribución
+
+## Compilación Rápida
+
+```bash
+# Instalar dependencias
+npm install
+
+# Executar en modo desenvolvemento
+npm run tauri-dev
+
+# Compilar para produción
+npm run tauri-build
+```
+
+## Características Principais
+
+| Funcionalidade | Descripción |
+|----------------|-------------|
+| Usuarios | Alta, baixa, modificación e busca de usuarios |
+| Artigos | Inventario con control de stock |
+| Préstamos | Rexistro, seguimento e devolucións |
+| Informes | Exportación a Excel e PDF con detalles por usuario |
+| Backups | Sistema automático e manual |
+| Multiusuario | Acceso simultáneo con bloqueo de ficheiros |
+
+## Capturas de Pantalla
+
+### Panel Principal
+Vista xeral do sistema con estatísticas, préstamos recentes e estado do inventario.
+
+![Panel Principal](reources/dashboard.png)
+
+### Xestión de Usuarias/os
+Lista de usuarios con busca e detalles completos, incluíndo préstamos activos.
+
+![Detalles de Usuario](reources/user-details.png)
+
+### Creación de Préstamos
+Modal intuitivo para seleccionar artigos e crear novos préstamos.
+
+![Novo Préstamo](reources/new-loan-modal.png)
+
+### Lista de Préstamos
+Vista completa de todos os préstamos con filtros por estado e opcións de devolución.
+
+![Lista de Préstamos](reources/loans-list.png)
+
+### Inventario
+Xestión de artigos con control de stock en tempo real por categorías.
+
+![Inventario](reources/inventory.png)
+
+### Informes e Exportación
+Xeración de informes anuais, exportación a Excel e sistema de copias de seguridade.
+
+![Informes](reources/reports.png)
+
+## Licenza
+
+Este é un proxecto de código aberto con fins educativos e de demostración.
+
+---
+
+*Aplicación de concepto - Non afiliada co Concello de Barreiros*

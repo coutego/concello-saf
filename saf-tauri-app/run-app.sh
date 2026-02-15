@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd "$(dirname "$0")/saf-tauri-app"
-
 echo "Building frontend..."
 npm run build
 
