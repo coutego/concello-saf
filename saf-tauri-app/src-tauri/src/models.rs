@@ -10,6 +10,7 @@ pub struct User {
     pub phone: Option<String>,
     pub email: Option<String>,
     pub notes: Option<String>,
+    pub active: bool,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -83,7 +84,7 @@ pub struct Loan {
     pub items: Vec<LoanItem>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum LoanStatus {
     Active,
@@ -142,6 +143,7 @@ pub struct DashboardStats {
     pub active_loans: i64,
     pub pending_returns: i64,
     pub overdue_loans: i64,
+    pub total_items: i64,
     pub total_items_available: i64,
     pub total_users: i64,
     pub recent_loans: Vec<Loan>,

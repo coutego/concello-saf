@@ -47,7 +47,18 @@ pub fn delete_user(id: String, state: State<AppState>) -> Result<(), String> {
         .db
         .lock()
         .map_err(|e| e.to_string())?
-        .delete_user(&id)
+        .deactivate_user(&id)
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn delete_item(id: String, state: State<AppState>) -> Result<(), String> {
+    let _lock = state.lock.lock().map_err(|e| e.to_string())?;
+    state
+        .db
+        .lock()
+        .map_err(|e| e.to_string())?
+        .delete_item(&id)
         .map_err(|e| e.to_string())
 }
 
@@ -327,16 +338,23 @@ pub fn export_to_excel(path: String, state: State<AppState>) -> Result<(), Strin
     crate::excel::export_loans_to_excel(&*db, &path).map_err(|e| e.to_string())
 }
 
-// Backup
+// Backup — uses app_handle to resolve paths server-side
 #[tauri::command]
 pub fn create_backup(
-    backup_dir: String,
     app_handle: tauri::AppHandle,
     state: State<AppState>,
 ) -> Result<BackupInfo, String> {
     let _lock = state.lock.lock().map_err(|e| e.to_string())?;
-    let db_path = get_db_location(app_handle)?;
-    crate::backup::create_backup(&db_path, &backup_dir).map_err(|e| e.to_string())
+    let db_path = get_db_location(app_handle.clone())?;
+    let backup_dir = app_handle
+        .path_resolver()
+        .app_data_dir()
+        .unwrap_or_else(|| std::path::PathBuf::from("."))
+        .join("backups");
+    // Ensure dir exists
+    std::fs::create_dir_all(&backup_dir).map_err(|e| e.to_string())?;
+    let backup_dir_str = backup_dir.to_string_lossy().to_string();
+    crate::backup::create_backup(&db_path, &backup_dir_str).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -346,6 +364,31 @@ pub fn restore_backup(backup_path: String, app_handle: tauri::AppHandle) -> Resu
 }
 
 #[tauri::command]
-pub fn get_backup_list(backup_dir: String) -> Result<Vec<BackupInfo>, String> {
-    crate::backup::get_backup_list(&backup_dir).map_err(|e| e.to_string())
+pub fn get_backup_list(app_handle: tauri::AppHandle) -> Result<Vec<BackupInfo>, String> {
+    let backup_dir = app_handle
+        .path_resolver()
+        .app_data_dir()
+        .unwrap_or_else(|| std::path::PathBuf::from("."))
+        .join("backups");
+    let backup_dir_str = backup_dir.to_string_lossy().to_string();
+    crate::backup::get_backup_list(&backup_dir_str).map_err(|e| e.to_string())
+}
+
+// Annual report
+#[tauri::command]
+pub fn export_annual_report(path: String, year: i32, state: State<AppState>) -> Result<(), String> {
+    let _lock = state.lock.lock().map_err(|e| e.to_string())?;
+    let db = state.db.lock().map_err(|e| e.to_string())?;
+    crate::excel::export_annual_report(&*db, &path, year).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn export_annual_report_pdf(
+    path: String,
+    year: i32,
+    state: State<AppState>,
+) -> Result<(), String> {
+    let _lock = state.lock.lock().map_err(|e| e.to_string())?;
+    let db = state.db.lock().map_err(|e| e.to_string())?;
+    crate::excel::export_annual_report_pdf(&*db, &path, year).map_err(|e| e.to_string())
 }

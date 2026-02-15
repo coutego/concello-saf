@@ -54,6 +54,7 @@ fn main() {
             commands::create_item,
             commands::update_item_stock,
             commands::search_items,
+            commands::delete_item,
             // Loan commands
             commands::get_loans,
             commands::get_loan_by_id,
@@ -69,6 +70,8 @@ fn main() {
             commands::get_events_by_loan,
             // Excel export
             commands::export_to_excel,
+            commands::export_annual_report,
+            commands::export_annual_report_pdf,
             // Backup
             commands::create_backup,
             commands::restore_backup,

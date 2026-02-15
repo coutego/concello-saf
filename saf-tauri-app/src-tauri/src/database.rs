@@ -11,149 +11,169 @@ pub const DEFAULT_ITEMS: &[(&str, &str, &str, &str)] = &[
     (
         "Cama eléctrica",
         "Cama articulada eléctrica con mando",
-        "mobility",
+        "Mobilidade",
         "🛏️",
     ),
-    ("Cama manual", "Cama articulada manual", "mobility", "🛏️"),
+    ("Cama manual", "Cama articulada manual", "Mobilidade", "🛏️"),
     (
         "Cadeira de rodas",
         "Cadeira de rodas manual estándar",
-        "mobility",
+        "Mobilidade",
         "♿",
     ),
     (
         "Cadeira de rodas eléctrica",
         "Cadeira de rodas eléctrica",
-        "mobility",
+        "Mobilidade",
         "♿",
     ),
-    ("Andador", "Andador de aluminio regulable", "mobility", "🚶"),
+    (
+        "Andador",
+        "Andador de aluminio regulable",
+        "Mobilidade",
+        "🚶",
+    ),
     (
         "Andador con rodas",
         "Andador con 4 rodas e freos",
-        "mobility",
+        "Mobilidade",
         "🚶",
     ),
-    ("Muletas", "Par de muletas axustables", "mobility", "🦯"),
+    ("Muletas", "Par de muletas axustables", "Mobilidade", "🦯"),
     (
         "Muletas canadenses",
         "Par de muletas canadenses",
-        "mobility",
+        "Mobilidade",
         "🦯",
     ),
-    ("Bastón", "Bastón simple", "mobility", "🦯"),
+    ("Bastón", "Bastón simple", "Mobilidade", "🦯"),
     (
         "Bastón tripode",
         "Bastón con base de 3 puntas",
-        "mobility",
+        "Mobilidade",
         "🦯",
     ),
-    ("Scooter", "Scooter eléctrico", "mobility", "🛴"),
+    ("Scooter", "Scooter eléctrico", "Mobilidade", "🛴"),
     // Baño
     (
         "Cadeira para duchas",
         "Cadeira con respaldo para ducha",
-        "bathroom",
+        "Baño",
         "🚿",
     ),
-    (
-        "Banqueta de ducha",
-        "Banqueta sen respaldo",
-        "bathroom",
-        "🚿",
-    ),
-    ("Elevador de WC", "Elevador para inodoro", "bathroom", "🚽"),
-    (
-        "Barras de baño",
-        "Xogo de barras para baño",
-        "bathroom",
-        "🛁",
-    ),
-    (
-        "Tapete antideslizante",
-        "Tapete para ducha",
-        "bathroom",
-        "🛁",
-    ),
+    ("Banqueta de ducha", "Banqueta sen respaldo", "Baño", "🚿"),
+    ("Elevador de WC", "Elevador para inodoro", "Baño", "🚽"),
+    ("Barras de baño", "Xogo de barras para baño", "Baño", "🛁"),
+    ("Tapete antideslizante", "Tapete para ducha", "Baño", "🛁"),
     // Transferencia
-    ("Grúa", "Grúa para traslado de pacientes", "transfer", "🏗️"),
-    ("Grúa de teito", "Grúa de teito con arnés", "transfer", "🏗️"),
+    (
+        "Grúa",
+        "Grúa para traslado de pacientes",
+        "Transferencia",
+        "🏗️",
+    ),
+    (
+        "Grúa de teito",
+        "Grúa de teito con arnés",
+        "Transferencia",
+        "🏗️",
+    ),
     (
         "Prancha de transferencia",
         "Prancha para desprazamentos",
-        "transfer",
+        "Transferencia",
         "📏",
     ),
-    ("Arnés", "Arnés para grúa", "transfer", "🎽"),
+    ("Arnés", "Arnés para grúa", "Transferencia", "🎽"),
     (
         "Cinturón de transferencia",
         "Cinturón de axuda",
-        "transfer",
+        "Transferencia",
         "🎽",
     ),
     // Coidados
-    ("Lavacabezas", "Lavacabezas portátil", "care", "💆"),
-    ("Cortaúñas", "Cortaúñas especial", "care", "✂️"),
-    ("Espejo", "Espejo de man", "care", "🪞"),
-    ("Maniquí", "Maniquí para prácticas", "care", "🎎"),
-    // Colchóns e postura
+    ("Lavacabezas", "Lavacabezas portátil", "Coidados", "💆"),
+    ("Cortaúñas", "Cortaúñas especial", "Coidados", "✂️"),
+    ("Espello", "Espello de man", "Coidados", "🪞"),
+    ("Maniquí", "Maniquí para prácticas", "Coidados", "🎎"),
+    // Cama e descanso
     (
         "Colchón antiescaras",
         "Colchón de aire antiescaras",
-        "bed",
+        "Cama/Descanso",
         "🛏️",
     ),
     (
         "Colchón viscoelástico",
         "Colchón viscoelástico",
-        "bed",
+        "Cama/Descanso",
         "🛏️",
     ),
     (
         "Colchón de espuma",
         "Colchón de espuma estándar",
-        "bed",
+        "Cama/Descanso",
         "🛏️",
     ),
-    ("Coxín antiescaras", "Coxín de aire ou xeles", "bed", "🪑"),
-    ("Coxín postural", "Coxín para postura", "bed", "🪑"),
-    ("Cuña", "Cuña de posicionamento", "bed", "📐"),
-    ("Roldana", "Roldana para talóns", "bed", "🦶"),
-    ("Barreiras de cama", "Barreiras de seguridade", "bed", "🛡️"),
+    (
+        "Coxín antiescaras",
+        "Coxín de aire ou xeles",
+        "Cama/Descanso",
+        "🪑",
+    ),
+    (
+        "Coxín postural",
+        "Coxín para postura",
+        "Cama/Descanso",
+        "🪑",
+    ),
+    ("Cuña", "Cuña de posicionamento", "Cama/Descanso", "📐"),
+    ("Roldana", "Roldana para talóns", "Cama/Descanso", "🦶"),
+    (
+        "Barreiras de cama",
+        "Barreiras de seguridade",
+        "Cama/Descanso",
+        "🛡️",
+    ),
     // Respiración
-    ("Nebulizador", "Nebulizador eléctrico", "respiratory", "💨"),
-    ("Aspirador", "Aspirador de secrecións", "respiratory", "🫁"),
-    ("Oxímetro", "Oxímetro de pulso", "respiratory", "💓"),
-    ("Termómetro", "Termómetro dixital", "respiratory", "🌡️"),
+    ("Nebulizador", "Nebulizador eléctrico", "Respiración", "💨"),
+    ("Aspirador", "Aspirador de secrecións", "Respiración", "🫁"),
+    ("Oxímetro", "Oxímetro de pulso", "Respiración", "💓"),
+    ("Termómetro", "Termómetro dixital", "Respiración", "🌡️"),
     // Alimentación
     (
         "Vaso antigoteo",
         "Vaso con tapa e boquilla",
-        "feeding",
+        "Alimentación",
         "🥤",
     ),
-    ("Prato con bordo", "Prato alto nos bordos", "feeding", "🍽️"),
+    (
+        "Prato con bordo",
+        "Prato alto nos bordos",
+        "Alimentación",
+        "🍽️",
+    ),
     (
         "Cubertos adaptados",
         "Cubertos con mangos anchos",
-        "feeding",
+        "Alimentación",
         "🍴",
     ),
-    ("Bib", "Babeteiro adulto", "feeding", "👶"),
+    ("Babeteiro", "Babeteiro adulto", "Alimentación", "👶"),
     // Vestir
-    ("Calzador", "Calzador de calcetíns", "dressing", "🧦"),
-    ("Botón", "Axuda para abrochar", "dressing", "👔"),
-    ("Zapateiro", "Calzador de zapatos", "dressing", "👟"),
+    ("Calzador", "Calzador de calcetíns", "Vestir", "🧦"),
+    ("Botón", "Axuda para abrochar", "Vestir", "👔"),
+    ("Zapateiro", "Calzador de zapatos", "Vestir", "👟"),
     // Comunicación
-    ("Lupa", "Lupa de man", "communication", "🔍"),
-    ("Audífonos", "Amplificador de son", "communication", "🎧"),
-    ("Campá", "Campá de chamada", "communication", "🔔"),
+    ("Lupa", "Lupa de man", "Comunicación", "🔍"),
+    ("Audífonos", "Amplificador de son", "Comunicación", "🎧"),
+    ("Campá", "Campá de chamada", "Comunicación", "🔔"),
     // Outros
-    ("Almofada", "Almofada xeral", "other", "🛋️"),
-    ("Bolsa de auga quente", "Bolsa térmica", "other", "♨️"),
-    ("Manta eléctrica", "Manta con calefacción", "other", "🔌"),
-    ("Mesa de cama", "Mesa para cama", "other", "🛏️"),
-    ("Portaoxíxeno", "Carro para botellas", "other", "🛒"),
+    ("Almofada", "Almofada xeral", "Outros", "🛋️"),
+    ("Bolsa de auga quente", "Bolsa térmica", "Outros", "♨️"),
+    ("Manta eléctrica", "Manta con calefacción", "Outros", "🔌"),
+    ("Mesa de cama", "Mesa para cama", "Outros", "🛏️"),
+    ("Portaoxíxeno", "Carro para botellas", "Outros", "🛒"),
 ];
 
 pub struct Database {
@@ -185,11 +205,26 @@ impl Database {
                 phone TEXT,
                 email TEXT,
                 notes TEXT,
+                active INTEGER NOT NULL DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )",
             [],
         )?;
+
+        // Migration: add active column if missing
+        let has_active: bool = self
+            .conn
+            .prepare("SELECT active FROM users LIMIT 0")
+            .is_ok();
+        if !has_active {
+            self.conn
+                .execute(
+                    "ALTER TABLE users ADD COLUMN active INTEGER NOT NULL DEFAULT 1",
+                    [],
+                )
+                .ok();
+        }
 
         // Items table
         self.conn.execute(
@@ -354,6 +389,16 @@ impl Database {
         )?;
 
         let (current_total, current_available) = current;
+        let loaned = current_total - current_available;
+
+        // Non se pode reducir por debaixo do que está prestado
+        if new_total_stock < loaned {
+            return Err(rusqlite::Error::InvalidParameterName(format!(
+                "Non se pode reducir o stock a {} porque hai {} unidades en préstamo",
+                new_total_stock, loaned
+            )));
+        }
+
         let difference = new_total_stock - current_total;
         let new_available = current_available + difference;
 
@@ -402,12 +447,42 @@ impl Database {
 
     // User operations
     pub fn create_user(&self, req: CreateUserRequest) -> Result<User> {
-        let id = Uuid::new_v4().to_string();
         let now = Local::now().naive_local();
 
+        // Check if a user with the same DNI exists (possibly deactivated)
+        let existing: Option<(String, bool)> = self
+            .conn
+            .query_row(
+                "SELECT id, active FROM users WHERE dni = ?1",
+                [&req.dni],
+                |row| Ok((row.get(0)?, row.get::<_, bool>(1)?)),
+            )
+            .ok();
+
+        if let Some((existing_id, active)) = existing {
+            if active {
+                return Err(rusqlite::Error::InvalidParameterName(
+                    "Xa existe un usuario activo con ese DNI".to_string(),
+                ));
+            }
+            // Reactivate existing user with updated data
+            self.conn.execute(
+                "UPDATE users SET name = ?1, address = ?2, phone = ?3, email = ?4, notes = ?5, active = 1, updated_at = ?6 WHERE id = ?7",
+                params![req.name, req.address, req.phone, req.email, req.notes, now, existing_id],
+            )?;
+            self.log_event(
+                "USER_REACTIVATED",
+                serde_json::json!({"userId": &existing_id, "name": &req.name, "dni": &req.dni}),
+                None,
+                Some(&existing_id),
+            )?;
+            return self.get_user_by_id(&existing_id);
+        }
+
+        let id = Uuid::new_v4().to_string();
         self.conn.execute(
-            "INSERT INTO users (id, name, dni, address, phone, email, notes, created_at, updated_at)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?8)",
+            "INSERT INTO users (id, name, dni, address, phone, email, notes, active, created_at, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 1, ?8, ?8)",
             params![
                 id, req.name, req.dni, req.address, req.phone, req.email, req.notes, now
             ],
@@ -425,7 +500,7 @@ impl Database {
 
     pub fn get_user_by_id(&self, id: &str) -> Result<User> {
         self.conn.query_row(
-            "SELECT id, name, dni, address, phone, email, notes, created_at, updated_at 
+            "SELECT id, name, dni, address, phone, email, notes, active, created_at, updated_at 
              FROM users WHERE id = ?1",
             [id],
             |row| {
@@ -437,8 +512,9 @@ impl Database {
                     phone: row.get(4)?,
                     email: row.get(5)?,
                     notes: row.get(6)?,
-                    created_at: row.get(7)?,
-                    updated_at: row.get(8)?,
+                    active: row.get(7)?,
+                    created_at: row.get(8)?,
+                    updated_at: row.get(9)?,
                 })
             },
         )
@@ -446,8 +522,8 @@ impl Database {
 
     pub fn get_users(&self) -> Result<Vec<User>> {
         let mut stmt = self.conn.prepare(
-            "SELECT id, name, dni, address, phone, email, notes, created_at, updated_at 
-             FROM users ORDER BY name",
+            "SELECT id, name, dni, address, phone, email, notes, active, created_at, updated_at 
+             FROM users WHERE active = 1 ORDER BY name",
         )?;
 
         let users = stmt
@@ -460,8 +536,9 @@ impl Database {
                     phone: row.get(4)?,
                     email: row.get(5)?,
                     notes: row.get(6)?,
-                    created_at: row.get(7)?,
-                    updated_at: row.get(8)?,
+                    active: row.get(7)?,
+                    created_at: row.get(8)?,
+                    updated_at: row.get(9)?,
                 })
             })?
             .collect::<Result<Vec<_>>>()?;
@@ -472,9 +549,9 @@ impl Database {
     pub fn search_users(&self, query: &str) -> Result<Vec<User>> {
         let search_pattern = format!("%{}%", query);
         let mut stmt = self.conn.prepare(
-            "SELECT id, name, dni, address, phone, email, notes, created_at, updated_at 
+            "SELECT id, name, dni, address, phone, email, notes, active, created_at, updated_at 
              FROM users 
-             WHERE name LIKE ?1 OR dni LIKE ?1 OR address LIKE ?1
+             WHERE active = 1 AND (name LIKE ?1 OR dni LIKE ?1 OR address LIKE ?1)
              ORDER BY name",
         )?;
 
@@ -488,8 +565,9 @@ impl Database {
                     phone: row.get(4)?,
                     email: row.get(5)?,
                     notes: row.get(6)?,
-                    created_at: row.get(7)?,
-                    updated_at: row.get(8)?,
+                    active: row.get(7)?,
+                    created_at: row.get(8)?,
+                    updated_at: row.get(9)?,
                 })
             })?
             .collect::<Result<Vec<_>>>()?;
@@ -548,13 +626,44 @@ impl Database {
         self.get_user_by_id(id)
     }
 
-    pub fn delete_user(&self, id: &str) -> Result<()> {
-        self.conn.execute("DELETE FROM users WHERE id = ?1", [id])?;
+    pub fn deactivate_user(&self, id: &str) -> Result<()> {
+        let now = Local::now().naive_local();
+        self.conn.execute(
+            "UPDATE users SET active = 0, updated_at = ?1 WHERE id = ?2",
+            params![now, id],
+        )?;
         self.log_event(
-            "USER_DELETED",
+            "USER_DEACTIVATED",
             serde_json::json!({"userId": id}),
             None,
             Some(id),
+        )?;
+        Ok(())
+    }
+
+    pub fn delete_item(&self, id: &str) -> Result<()> {
+        // Only allow deletion if total_stock == 0 and available_stock == 0
+        let (total, available): (i32, i32) = self.conn.query_row(
+            "SELECT total_stock, available_stock FROM items WHERE id = ?1",
+            [id],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )?;
+        if total != 0 || available != 0 {
+            return Err(rusqlite::Error::InvalidParameterName(
+                "Non se pode eliminar un artigo con stock > 0".to_string(),
+            ));
+        }
+        let name: String =
+            self.conn
+                .query_row("SELECT name FROM items WHERE id = ?1", [id], |row| {
+                    row.get(0)
+                })?;
+        self.conn.execute("DELETE FROM items WHERE id = ?1", [id])?;
+        self.log_event(
+            "ITEM_DELETED",
+            serde_json::json!({"itemId": id, "name": name}),
+            None,
+            None,
         )?;
         Ok(())
     }
@@ -978,6 +1087,12 @@ impl Database {
             |row| row.get(0),
         )?;
 
+        let total_items: i64 = self.conn.query_row(
+            "SELECT COALESCE(SUM(total_stock), 0) FROM items",
+            [],
+            |row| row.get(0),
+        )?;
+
         let total_items_available: i64 = self.conn.query_row(
             "SELECT COALESCE(SUM(available_stock), 0) FROM items",
             [],
@@ -995,6 +1110,7 @@ impl Database {
             active_loans,
             pending_returns,
             overdue_loans,
+            total_items,
             total_items_available,
             total_users,
             recent_loans,
