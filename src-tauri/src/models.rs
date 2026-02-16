@@ -59,6 +59,7 @@ pub struct CreateItemRequest {
     pub notes: Option<String>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateItemRequest {
     pub name: Option<String>,
@@ -122,6 +123,7 @@ pub struct CreateLoanRequest {
     pub notes: Option<String>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReturnLoanRequest {
     pub condition: Option<String>,

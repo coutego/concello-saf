@@ -12,16 +12,36 @@ Este manual está dirixido ás persoas responsables de administrar a aplicación
 
 A aplicación funciona en:
 - **Windows**: Windows 10 ou superior (64 bits)
+- **macOS**: macOS 10.13 (High Sierra) ou superior (Intel e Apple Silicon)
+- **Linux**: Ubuntu 20.04+, Debian 11+, ou distribucións equivalentes (x86_64)
 
 ### 1.2 Despregamento
 
-A aplicación é un **executable independente (standalone)** que non require instalación. Simplemente:
+A aplicación é un **executable independente (standalone)** que non require instalación.
 
-1. **Coloca o ficheiro `saf-barreiros-app.exe` nunha localización de rede** accesible para todos os usuarios (por exemplo: `\\SERVIDOR\Aplicacions\SAF\`)
+#### Windows
 
+1. **Coloca o ficheiro `.exe` ou `.msi` nunha localización de rede** accesible para todos os usuarios (por exemplo: `\\SERVIDOR\Aplicacions\SAF\`)
 2. **Crea un atallo** nos ordenadores dos usuarios que apunte a esa localización
 
-É todo! A aplicación pode executarse directamente desde calquera localización.
+#### macOS
+
+1. Abre o ficheiro `.dmg`
+2. Arrastra a aplicación á carpeta Aplicacións
+3. Na primeira execución, pode que necesites autorizar a aplicación en Preferencias do Sistema → Seguridade e Privacidade
+
+#### Linux
+
+1. Instala o paquete `.deb`:
+   ```bash
+   sudo dpkg -i saf_*.deb
+   sudo apt-get install -f  # Para instalar dependencias
+   ```
+   Ou usa o `.AppImage` (non require instalación):
+   ```bash
+   chmod +x saf_*.AppImage
+   ./saf_*.AppImage
+   ```
 
 ### 1.3 Datos da Aplicación
 
@@ -46,11 +66,11 @@ Por defecto, a base de datos gárdase en:
 
 | Sistema | Localización |
 |---------|--------------|
-| Windows | `C:\Users\[Usuario]\AppData\Local\saf-barreiros-app\saf_database.db` |
-| macOS | `~/Library/Application Support/saf-barreiros-app/saf_database.db` |
-| Linux | `~/.local/share/saf-barreiros-app/saf_database.db` |
+| **Windows** | `C:\Users\[Usuario]\AppData\Local\es.concellodebarreiros.saf\saf_database.db` |
+| **macOS** | `~/Library/Application Support/es.concellodebarreiros.saf/saf_database.db` |
+| **Linux** | `~/.local/share/es.concellodebarreiros.saf/saf_database.db` |
 
-Se configuraches unha carpeta personalizada, a base de datos estará nesa carpeta.
+Se configuraches unha carpeta personalizada na primeira execución, a base de datos estará nesa carpeta. Podes ver e cambiar a localización desde **Administración → Base de datos**.
 
 ### 2.3 Copia de Seguridade Manual (Moi Importante!)
 
@@ -89,56 +109,74 @@ Se perdesche datos e tes unha copia de seguridade manual:
 
 ---
 
-## 3. Sistema de Backup Interno
+## 3. Sistema de Copias de Seguridade
 
-### 3.1 Que é o Backup Interno?
+### 3.1 Copias de Seguridade Internas
 
-A aplicación ten un sistema de backup integrado que crea copias de seguridade automáticamente.
+A aplicación xestiona as copias de seguridade desde a sección **Administración → Copias de seguridade**.
 
-### 3.2 Como Funciona
+#### Funcións dispoñibles:
 
-Cando fas clic en **"Crear Backup"** desde a aplicación:
+| Acción | Descripción |
+|--------|-------------|
+| **Crear copia** | Crea unha nova copia de seguridade e gárdaa no directorio de backups da aplicación |
+| **Exportar** | Garda unha copia nunha localización arbitraria (USB, disco de rede, nube) |
+| **Restaurar** | Recupera os datos desde unha copia gardada (substitúe os datos actuais) |
+| **Importar externa** | Importa unha copia de seguridade dende unha localización externa |
+| **Eliminar** | Elimina unha copia de seguridade do sistema |
 
-1. A aplicación crea un ficheiro ZIP coa base de datos
-2. O ficheiro noméase automaticamente coa data e hora: `saf_backup_20250315_143022.zip`
-3. Gárdase na carpeta `backups/` dentro do directorio de datos
-
-### 3.3 Onde están os Backups Internos?
+### 3.2 Onde están os Backups?
 
 Os backups créanse en:
 
-- **Windows**: `C:\Users\[Usuario]\AppData\Local\saf-barreiros-app\backups\`
-- **macOS**: `~/Library/Application Support/saf-barreiros-app/backups/`
-- **Linux**: `~/.local/share/saf-barreiros-app/backups/`
+| Sistema | Localización |
+|---------|--------------|
+| **Windows** | `C:\Users\[Usuario]\AppData\Local\es.concellodebarreiros.saf\backups\` |
+| **macOS** | `~/Library/Application Support/es.concellodebarreiros.saf/backups/` |
+| **Linux** | `~/.local/share/es.concellodebarreiros.saf/backups/` |
 
-### 3.4 Restaurar un Backup Interno
+Cada backup é un ficheiro ZIP co nome `saf_backup_YYYYMMDD_HHMMSS.zip`.
 
-Para restaurar un backup creado pola aplicación:
+### 3.3 Como Crear unha Copia
 
 1. Abre a aplicación
-2. Vai a **"Sistema" → "Backup e Restauración"**
-3. Verás unha lista de todos os backups dispoñibles
-4. Selecciona o backup que queiras restaurar
-5. Fai clic en **"Restaurar"**
-6. Confirma a acción
+2. Vai a **Administración → Copias de seguridade**
+3. Pulsa **"+ Crear copia"**
+4. A copia aparecerá na lista coa data e hora
 
-**Que pasa durante a restauración?**
+### 3.4 Como Exportar unha Copia a USB ou Rede
 
-1. A aplicación fai unha copia de seguridade da base de datos actual (por se acaso)
-2. Extrae a base de datos do ficheiro ZIP seleccionado
-3. Substitúe a base de datos actual
-4. A aplicación recárgase cos datos restaurados
+Para gardar unha copia nun dispositivo externo:
 
-### 3.5 Relación entre Backup Manual e Interno
+1. Na lista de copias, localiza a copia que queres exportar
+2. Pulsa **"Exportar"**
+3. Selecciona a localización de destino (por exemplo, a unidade USB)
+4. O ficheiro copiarase nesa localización
 
-| Tipo | Cando usalo | Onde está |
-|------|-------------|-----------|
-| **Manual** | Backup diario, gardar en lugar externo (USB, nube) | Onde ti decidas |
-| **Interno** | Antes de facer cambios importantes, para desfacer cambios | Carpeta da aplicación |
+### 3.5 Como Restaurar unha Copia
 
-**Recomendación**: Usa os dous sistemas:
-- **Backup interno**: antes de facer cambios grandes na aplicación
-- **Backup manual**: cada día ao finalizar a xornada
+**⚠️ Atención**: Esta operación é destrutiva e substitúe todos os datos actuais.
+
+1. Na lista de copias, localiza a copia que queres restaurar
+2. Pulsa **"Restaurar"**
+3. Confirma a acción no diálogo de advertencia
+4. Pecha e volve abrir a aplicación para ver os datos restaurados
+
+### 3.6 Como Importar unha Copia Externa
+
+Se tes unha copia de seguridade gardada nun USB ou outra localización:
+
+1. Pulsa **"Importar externa"**
+2. Selecciona o ficheiro `.zip` da copia
+3. A copia importarase e aparecerá na lista
+
+### 3.7 Como Eliminar Copias Antigas
+
+1. Na lista de copias, localiza a copia que queres eliminar
+2. Pulsa **"Eliminar"**
+3. Confirma a acción
+
+**Recomendación**: Mantén as últimas 10 copias. Exporta as máis antigas a un USB antes de eliminalas se as queres conservar.
 
 ---
 
@@ -150,19 +188,28 @@ Para restaurar un backup creado pola aplicación:
 
 **Posibles causas e solucións**:
 
-1. **Ficheiro de bloqueo activo**:
+1. **Ficheiro de bloqueo activo** (raro, pero pode ocorrer se a aplicación se pechou de forma anormal):
    - Busca o ficheiro `saf_database.lock` na carpeta de datos
    - Se a aplicación está pechada, elimina este ficheiro
    - Tenta abrir a aplicación de novo
+   - Nota: Normalmente o ficheiro `.lock` elimínase automáticamente ao pechar a aplicación
 
 2. **Permisos insuficientes**:
-   - Verifica que tes permisos de escritura na carpeta de datos
-   - En Windows: clic dereito na carpeta → Propiedades → Seguridade
-   - En macOS/Linux: usa `chmod` para dar permisos
+   - **Windows**: clic dereito na carpeta → Propiedades → Seguridade
+   - **macOS**: Usa "Obter información" na carpeta e verifica os permisos
+   - **Linux**: Usa `chmod` para dar permisos: `chmod -R 755 ~/.local/share/es.concellodebarreiros.saf/`
 
 3. **Base de datos danada**:
    - Intenta restaurar un backup recente
    - Se non tes backup, contacta con soporte técnico
+
+4. **macOS: Aplicación non firmada**:
+   - Ao abrir por primeira vez, vai a Preferencias do Sistema → Seguridade e Privacidade
+   - Fai clic en "Abrir de todos modos" preto da mensaxe de seguridade
+   - Ou executa desde o terminal: `xattr -cr /Applications/SAF.app`
+
+5. **Linux: Dependencias faltantes**:
+   - Executa: `sudo apt-get install libwebkit2gtk-4.1-dev libgtk-3-dev`
 
 ### 4.2 Mensaxe "Base de Datos Bloqueada"
 
@@ -173,7 +220,7 @@ Para restaurar un backup creado pola aplicación:
 **Solución**:
 1. Agarda uns segundos e tenta de novo
 2. Se o problema persiste, verifica que ninguén máis estea usando a aplicación
-3. Se ninguén a está a usar, elimina o ficheiro `.lock`
+3. Se ninguén a está a usar e o problema continúa, elimina o ficheiro `.lock` da carpeta de datos
 
 ### 4.3 Non Podo Acceder aos Datos (Carpeta en Rede)
 
@@ -202,7 +249,7 @@ Para restaurar un backup creado pola aplicación:
 **Posibles causas**:
 
 1. **Usando a base de datos equivocada**:
-   - Verifica a localización da base de datos en "Configuración"
+   - Verifica a localización da base de datos en **Administración → Base de datos**
    - Comproba que estás a usar a carpeta correcta
 
 2. **Problemas de permisos**:
@@ -219,13 +266,13 @@ Para restaurar un backup creado pola aplicación:
 1. **Non entren en pánico** - probablemente sexa recuperable
 
 2. **Busca backups**:
-   - Revisa a carpeta `backups/` da aplicación
-   - Revisa os teus backups manuais (USB, nube)
+   - Revisa a sección **Administración → Copias de seguridade**
+   - Revisa os teus backups exportados (USB, nube)
    - Busca ficheiros con extensión `.backup.XXXXXX` na carpeta de datos
 
 3. **Restaura o backup máis recente**:
    - Usa a función de restauración da aplicación
-   - Ou copia manualmente o ficheiro de backup
+   - Ou importa un backup externo e restaura
 
 ### 4.6 Erro ao Exportar a Excel ou PDF
 
@@ -250,12 +297,12 @@ Para restaurar un backup creado pola aplicación:
 
 ### 5.1 Tarefas Diarias
 
-- [ ] Facer backup manual ao finalizar a xornada
+- [ ] Facer unha copia de seguridade e exportala a unha unidade externa (USB, nube)
 - [ ] Verificar que a aplicación funciona correctamente
 
 ### 5.2 Tarefas Semanais
 
-- [ ] Revisar os backups internos e eliminar os máis antigos (manter os últimos 10)
+- [ ] Revisar as copias de seguridade na aplicación e eliminar as máis antigas (manter as últimas 10)
 - [ ] Verificar o espazo en disco dispoñible
 
 ### 5.3 Tarefas Mensais
@@ -277,18 +324,44 @@ Se tes problemas que non podes resolver:
 
 ## Apéndice: Estrutura de Ficheiros
 
+### Windows
+
 ```
-saf-barreiros-app/
-├── saf_database.db          ← Base de datos principal (COPIAR ESTE!)
-├── saf_database.lock        ← Ficheiro de bloqueo (automático, non copiar)
+C:\Users\[Usuario]\AppData\Local\es.concellodebarreiros.saf\
+├── saf_database.db          ← Base de datos principal
+├── saf_database.lock        ← Ficheiro de bloqueo (automático, elimínase ao pechar)
 ├── settings.json            ← Configuración da aplicación
-└── backups/                 ← Carpeta de backups internos
-    ├── saf_backup_20250315_100000.zip
-    ├── saf_backup_20250314_153000.zip
+└── backups/                 ← Carpeta de copias de seguridade
+    ├── saf_backup_20260215_100000.zip
+    ├── saf_backup_20260214_153000.zip
+    └── ...
+```
+
+### macOS
+
+```
+~/Library/Application Support/es.concellodebarreiros.saf/
+├── saf_database.db          ← Base de datos principal
+├── saf_database.lock        ← Ficheiro de bloqueo (automático, elimínase ao pechar)
+├── settings.json            ← Configuración da aplicación
+└── backups/                 ← Carpeta de copias de seguridade
+    ├── saf_backup_20260215_100000.zip
+    └── ...
+```
+
+### Linux
+
+```
+~/.local/share/es.concellodebarreiros.saf/
+├── saf_database.db          ← Base de datos principal
+├── saf_database.lock        ← Ficheiro de bloqueo (automático, elimínase ao pechar)
+├── settings.json            ← Configuración da aplicación
+└── backups/                 ← Carpeta de copias de seguridade
+    ├── saf_backup_20260215_100000.zip
     └── ...
 ```
 
 ---
 
 *Manual de Administración - SAF Barreiros v1.0*
-*Última actualización: Febreiro 2025*
+*Última actualización: Febreiro 2026*

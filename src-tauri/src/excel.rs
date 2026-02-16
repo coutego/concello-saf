@@ -335,7 +335,7 @@ pub fn export_annual_report_pdf<P: AsRef<Path>>(
     let current_layer = doc.get_page(page1).get_layer(layer1);
 
     let margin_left = Mm(20.0);
-    let page_width = Mm(170.0);
+    let _page_width = Mm(170.0);
     let mut y_pos = Mm(277.0);
 
     fn draw_user_section(

@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use std::path::PathBuf;
 use std::sync::Mutex;
 use tauri::Manager;
@@ -14,7 +16,7 @@ use lock::FileLock;
 
 pub struct AppState {
     pub db: Mutex<Database>,
-    pub lock: Mutex<FileLock>,
+    pub lock: Mutex<Option<FileLock>>,
 }
 
 fn main() {
@@ -35,7 +37,23 @@ fn main() {
             // Store in app state
             app.manage(AppState {
                 db: Mutex::new(db),
-                lock: Mutex::new(file_lock),
+                lock: Mutex::new(Some(file_lock)),
+            });
+
+            // Get main window and setup cleanup on close
+            let main_window = app.get_window("main").unwrap();
+            let app_handle_clone = app_handle.clone();
+
+            main_window.on_window_event(move |event| {
+                if let tauri::WindowEvent::CloseRequested { .. } = event {
+                    // Cleanup: release file lock
+                    if let Some(state) = app_handle_clone.try_state::<AppState>() {
+                        if let Ok(mut lock_guard) = state.lock.lock() {
+                            // Drop the FileLock explicitly - this will unlock and delete the .lock file
+                            *lock_guard = None;
+                        }
+                    }
+                }
             });
 
             Ok(())
@@ -76,9 +94,13 @@ fn main() {
             commands::create_backup,
             commands::restore_backup,
             commands::get_backup_list,
+            commands::export_backup,
+            commands::import_backup,
+            commands::delete_backup,
             // Settings
             commands::get_db_location,
             commands::set_db_location,
+            commands::has_db_location_configured,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

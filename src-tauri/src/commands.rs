@@ -330,6 +330,27 @@ pub fn set_db_location(path: String, app_handle: tauri::AppHandle) -> Result<(),
     std::fs::write(&settings_path, settings.to_string()).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+pub fn has_db_location_configured(app_handle: tauri::AppHandle) -> Result<bool, String> {
+    use std::path::PathBuf;
+
+    let settings_path = app_handle
+        .path_resolver()
+        .app_data_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join("settings.json");
+
+    if let Ok(content) = std::fs::read_to_string(&settings_path) {
+        if let Ok(settings) = serde_json::from_str::<serde_json::Value>(&content) {
+            if settings.get("db_path").and_then(|v| v.as_str()).is_some() {
+                return Ok(true);
+            }
+        }
+    }
+
+    Ok(false)
+}
+
 // Excel export
 #[tauri::command]
 pub fn export_to_excel(path: String, state: State<AppState>) -> Result<(), String> {
@@ -372,6 +393,43 @@ pub fn get_backup_list(app_handle: tauri::AppHandle) -> Result<Vec<BackupInfo>, 
         .join("backups");
     let backup_dir_str = backup_dir.to_string_lossy().to_string();
     crate::backup::get_backup_list(&backup_dir_str).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn export_backup(source_path: String, dest_path: String) -> Result<(), String> {
+    std::fs::copy(&source_path, &dest_path)
+        .map(|_| ())
+        .map_err(|e| format!("Erro ao exportar: {}", e))
+}
+
+#[tauri::command]
+pub fn import_backup(source_path: String, app_handle: tauri::AppHandle) -> Result<(), String> {
+    let backup_dir = app_handle
+        .path_resolver()
+        .app_data_dir()
+        .unwrap_or_else(|| std::path::PathBuf::from("."))
+        .join("backups");
+
+    std::fs::create_dir_all(&backup_dir).map_err(|e| e.to_string())?;
+
+    let source_path = std::path::Path::new(&source_path);
+    let filename = source_path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("imported_backup.zip");
+
+    let dest_path = backup_dir.join(filename);
+
+    std::fs::copy(source_path, &dest_path)
+        .map(|_| ())
+        .map_err(|e| format!("Erro ao importar: {}", e))
+}
+
+#[tauri::command]
+pub fn delete_backup(backup_path: String) -> Result<(), String> {
+    std::fs::remove_file(&backup_path)
+        .map(|_| ())
+        .map_err(|e| format!("Erro ao eliminar: {}", e))
 }
 
 // Annual report

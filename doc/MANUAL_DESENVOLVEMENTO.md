@@ -89,7 +89,7 @@ Abre un terminal e executa:
 
 ```bash
 # Instalar Node.js
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 
 # Instalar Rust
@@ -97,7 +97,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source ~/.cargo/env
 
 # Instalar dependencias de sistema
-sudo apt install -y libwebkit2gtk-4.0-dev \
+sudo apt install -y libwebkit2gtk-4.1-dev \
     build-essential \
     curl \
     wget \
@@ -176,9 +176,17 @@ O executable estará en:
 
 | Sistema | Localización |
 |---------|--------------|
-| Windows | `src-tauri/target/release/bundle/msi/` |
-| macOS | `src-tauri/target/release/bundle/dmg/` ou `macos/` |
-| Linux | `src-tauri/target/release/bundle/deb/` |
+| **Windows** | `src-tauri/target/release/bundle/msi/` ou `src-tauri/target/release/*.exe` |
+| **macOS** | `src-tauri/target/release/bundle/dmg/` ou `src-tauri/target/release/bundle/macos/` |
+| **Linux** | `src-tauri/target/release/bundle/deb/` ou `src-tauri/target/release/bundle/appimage/` |
+
+**Tipos de paquetes xerados**:
+
+| Sistema | Formatos |
+|---------|----------|
+| **Windows** | `.exe` (standalone), `.msi` (instalador) |
+| **macOS** | `.dmg` (instalador), `.app` (aplicación) |
+| **Linux** | `.deb` (Debian/Ubuntu), `.AppImage` (universal) |
 
 ### 3.5 Comandos Dispoñibles
 
@@ -351,7 +359,12 @@ Podes abrir a base de datos SQLite con ferramentas externas:
 - **DBeaver** (gratuito): https://dbeaver.io/
 
 A base de datos está en:
-- Windows: `%APPDATA%\saf-barreiros-app\saf_database.db`
+
+| Sistema | Localización |
+|---------|--------------|
+| **Windows** | `%LOCALAPPDATA%\es.concellodebarreiros.saf\saf_database.db` |
+| **macOS** | `~/Library/Application Support/es.concellodebarreiros.saf/saf_database.db` |
+| **Linux** | `~/.local/share/es.concellodebarreiros.saf/saf_database.db` |
 
 ---
 
@@ -359,7 +372,7 @@ A base de datos está en:
 
 ### 7.1 Compilación mediante GitHub Actions (Recomendado)
 
-O repositorio inclúe unha GitHub Action que compila automaticamente a aplicación para Windows. Para usala:
+O repositorio inclúe unha GitHub Action que compila automaticamente a aplicación para **Windows, macOS e Linux**. Para usala:
 
 1. **Fai fork do repositorio** na túa conta de GitHub
 
@@ -371,14 +384,18 @@ O repositorio inclúe unha GitHub Action que compila automaticamente a aplicaci�
 
 3. **Executa a acción manualmente**:
    - Vai á lapela "Actions" no teu repositorio de GitHub
-   - Selecciona "Build Windows"
+   - Selecciona "Build Release"
    - Fai clic en "Run workflow"
 
-4. **Descarga o executable**:
+4. **Descarga os executables**:
    - Cando a acción remate, vai a "Releases" ou "Artifacts"
-   - Descarga o ficheiro `.exe`
+   - Descarga os ficheiros para cada plataforma:
+     - **Windows**: `.exe` ou `.msi`
+     - **macOS Intel**: `.dmg` para procesadores Intel (amacOS 13 runner)
+     - **macOS ARM**: `.dmg` para Apple Silicon (M1/M2/M3)
+     - **Linux**: `.deb` ou `.AppImage` para x86_64
 
-Esta é a forma máis sinxela de obter un executable funcional sen ter que configurar un entorno de desenvolvemento local.
+Esta é a forma máis sinxela de obter executables para todas as plataformas sen ter que configurar un entorno de desenvolvemento local.
 
 ### 7.2 Compilación Local
 
@@ -389,7 +406,23 @@ npm run tauri-build
 ```
 
 O executable estará en:
-- **Windows**: `src-tauri/target/release/saf-barreiros-app.exe`
+
+| Sistema | Localización |
+|---------|--------------|
+| **Windows** | `src-tauri/target/release/bundle/msi/` ou `src-tauri/target/release/*.exe` |
+| **macOS** | `src-tauri/target/release/bundle/dmg/` ou `src-tauri/target/release/bundle/macos/` |
+| **Linux** | `src-tauri/target/release/bundle/deb/` ou `src-tauri/target/release/bundle/appimage/` |
+
+**Nota**: Para compilar para macOS ARM desde un Mac Intel (ou viceversa), necesitas instalar o target adicional:
+```bash
+# Para compilar para Apple Silicon desde Intel
+rustup target add aarch64-apple-darwin
+npm run tauri-build -- --target aarch64-apple-darwin
+
+# Para compilar para Intel desde Apple Silicon
+rustup target add x86_64-apple-darwin
+npm run tauri-build -- --target x86_64-apple-darwin
+```
 
 ### 7.3 Asinar a Aplicación (Opcional)
 
@@ -428,13 +461,16 @@ Antes de distribuír a aplicación, verifica:
 
 - [ ] `cargo check` non da erros
 - [ ] `npm run build` non da erros
-- [ ] A aplicación abre e funciona correctamente
+- [ ] A aplicación abre e funciona correctamente en Windows
+- [ ] A aplicación abre e funciona correctamente en macOS (opcional)
+- [ ] A aplicación abre e funciona correctamente en Linux (opcional)
 - [ ] Os backups créanse correctamente
 - [ ] A exportación a Excel funciona
 - [ ] A exportación a PDF funciona
 - [ ] A base de datos gárdase na localización correcta
+- [ ] O ficheiro `.lock` elimínase ao pechar a aplicación
 
 ---
 
 *Manual de Desenvolvemento - SAF Barreiros v1.0*
-*Última actualización: Febreiro 2025*
+*Última actualización: Febreiro 2026*

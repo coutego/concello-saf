@@ -71,8 +71,29 @@ export default function SAFApp() {
   const [showReturn, setShowReturn] = useState(null);
   const [showEvents, setShowEvents] = useState(false);
   const [toast, setToast] = useState(null);
+  const [showDbConfig, setShowDbConfig] = useState(false);
+  const [dbLocation, setDbLocation] = useState(null);
+  const [needsDbConfig, setNeedsDbConfig] = useState(false);
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2800); };
+
+  // Check if database location is configured on first run
+  useEffect(() => {
+    const checkDbConfig = async () => {
+      try {
+        const configured = await invoke("has_db_location_configured");
+        if (!configured) {
+          setNeedsDbConfig(true);
+          setShowDbConfig(true);
+        }
+        const location = await invoke("get_db_location");
+        setDbLocation(location);
+      } catch (err) {
+        console.error("Error checking db config:", err);
+      }
+    };
+    checkDbConfig();
+  }, []);
 
   // Load data from backend
   const loadAll = async () => {
@@ -167,6 +188,7 @@ export default function SAFApp() {
     { id: "loans", label: "Préstamos", icon: "📋" },
     { id: "stock", label: "Inventario", icon: "📦" },
     { id: "reports", label: "Informes", icon: "📤" },
+    { id: "admin", label: "Administración", icon: "⚙️" },
     { id: "events", label: "Rexistro", icon: "🕐" },
     { id: "manual", label: "Axuda", icon: "📖" },
   ];
@@ -241,6 +263,7 @@ export default function SAFApp() {
             {view === "loans" && <LoansView loans={loans} getUserName={getUserName} items={items} onReturn={(id) => setShowReturn(id)} onNewLoan={() => setShowNewLoan(true)} />}
             {view === "stock" && <StockView items={items} onAdd={() => setShowNewStock(true)} loadAll={loadAll} showToast={showToast} />}
             {view === "reports" && <ReportsView showToast={showToast} />}
+            {view === "admin" && <AdminView showToast={showToast} dbLocation={dbLocation} setDbLocation={setDbLocation} />}
             {view === "events" && <EventsView events={events} />}
             {view === "manual" && <ManualView />}
           </div>
@@ -266,6 +289,20 @@ export default function SAFApp() {
         background: "#1a6b5a", color: "#fff", padding: "12px 24px", borderRadius: 12, fontWeight: 700, fontSize: 14,
         boxShadow: "0 8px 24px rgba(26,107,90,0.35)", animation: "toastPop 0.25s ease",
       }}>✓ {toast}</div>}
+
+      {/* First-run DB config modal */}
+      <DbConfigModal 
+        open={showDbConfig} 
+        onClose={() => { if (!needsDbConfig) setShowDbConfig(false); }} 
+        onConfigured={() => {
+          setNeedsDbConfig(false);
+          setShowDbConfig(false);
+        }}
+        dbLocation={dbLocation} 
+        setDbLocation={setDbLocation} 
+        showToast={showToast}
+        isRequired={needsDbConfig}
+      />
     </div>
   );
 }
@@ -1147,7 +1184,6 @@ function EditUserModal({ open, onClose, user, onSave }) {
 function ReportsView({ showToast }) {
   const [year, setYear] = useState(new Date().getFullYear());
   const [format, setFormat] = useState("xlsx");
-  const [confirmRestore, setConfirmRestore] = useState(false);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
@@ -1186,27 +1222,6 @@ function ReportsView({ showToast }) {
         }
       }
     } catch (err) { showToast("Erro: " + err); }
-  };
-
-  const handleBackup = async () => {
-    try {
-      await invoke("create_backup");
-      showToast("Copia de seguridade creada con éxito!");
-    } catch (err) { showToast("Erro: " + err); }
-  };
-
-  const handleRestoreBackup = async () => {
-    try {
-      const filePath = await tauriOpen({
-        filters: [{ name: "Copia de seguridade (ZIP)", extensions: ["zip"] }],
-        multiple: false,
-      });
-      if (filePath) {
-        await invoke("restore_backup", { backupPath: filePath });
-        showToast("Datos restaurados! Reinicia a aplicación para ver os cambios.");
-        setConfirmRestore(false);
-      }
-    } catch (err) { showToast("Erro: " + err); setConfirmRestore(false); }
   };
 
   const lbl = { display: "block", fontSize: 11, fontWeight: 700, color: "#5a6a7a", marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 };
@@ -1256,50 +1271,7 @@ function ReportsView({ showToast }) {
           </div>
           <Btn primary onClick={handleAnnualReport} style={{ width: "100%" }}>Xerar informe {year}</Btn>
         </div>
-
-        {/* Backup */}
-        <div style={{ background: "#fff", borderRadius: 14, padding: "22px 24px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <span style={{ fontSize: 28 }}>💾</span>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: 15 }}>Copia de seguridade</div>
-              <div style={{ fontSize: 12, color: "#8a96a3" }}>Gardar unha copia da base de datos</div>
-            </div>
-          </div>
-          <Btn primary onClick={handleBackup} style={{ width: "100%" }}>Crear copia agora</Btn>
-        </div>
-
-        {/* Restore */}
-        <div style={{ background: "#fff", borderRadius: 14, padding: "22px 24px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <span style={{ fontSize: 28 }}>🔄</span>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: 15 }}>Restaurar copia de seguridade</div>
-              <div style={{ fontSize: 12, color: "#8a96a3" }}>Recuperar datos desde un ficheiro .zip</div>
-            </div>
-          </div>
-          <Btn danger onClick={() => setConfirmRestore(true)} style={{ width: "100%" }}>Restaurar desde arquivo</Btn>
-        </div>
       </div>
-
-      {/* Confirm restore modal */}
-      <Modal open={confirmRestore} onClose={() => setConfirmRestore(false)} title="Restaurar copia de seguridade">
-        <div style={{ background: "#FCE4EC", border: "1px solid #EF9A9A", borderRadius: 10, padding: "14px 18px", marginBottom: 16 }}>
-          <div style={{ fontWeight: 700, fontSize: 13, color: "#C62828", marginBottom: 6 }}>⚠️ Atención: esta acción é destrutiva</div>
-          <p style={{ fontSize: 13, color: "#5a6a7a", lineHeight: 1.6, margin: 0 }}>
-            Ao restaurar unha copia de seguridade, <strong>todos os datos actuais serán substituídos</strong> polos datos do arquivo seleccionado.
-            Esta acción non se pode desfacer.
-          </p>
-        </div>
-        <p style={{ fontSize: 13, color: "#5a6a7a", lineHeight: 1.6 }}>
-          Recoméndase crear unha copia de seguridade antes de restaurar.
-          Despois de restaurar, deberá pechar e volver a abrir a aplicación para que os cambios teñan efecto.
-        </p>
-        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 20 }}>
-          <Btn onClick={() => setConfirmRestore(false)}>Cancelar</Btn>
-          <Btn danger onClick={handleRestoreBackup}>Seleccionar arquivo e restaurar</Btn>
-        </div>
-      </Modal>
     </div>
   );
 }
@@ -1336,15 +1308,331 @@ function ManualView() {
         <P><strong>Actualizar stock:</strong> Pulsar "Actualizar stock" nun artigo para cambiar o stock total. Non se pode reducir por debaixo do número de unidades en préstamo.</P>
         <P><strong>Eliminar artigo:</strong> Só se pode eliminar un artigo cando o stock total é 0 (ningunha unidade no sistema). Nese caso aparecerá a icona de papeleira.</P>
 
-        <S>5. Informes e copias de seguridade</S>
+        <S>5. Informes</S>
         <P><strong>Exportar a Excel:</strong> Descarga un ficheiro .xlsx con toda a información de usuarios, préstamos e inventario.</P>
         <P><strong>Informe anual:</strong> Xera un ficheiro coa actividade dun ano concreto, listando só os/as usuarios/as que recibiron algún préstamo nese ano e os artigos prestados. Pódese xerar en formato Excel (.xlsx) ou PDF.</P>
-        <P><strong>Copia de seguridade:</strong> Crea unha copia da base de datos. A copia gárdase como ficheiro .zip no directorio de datos da aplicación.</P>
-        <P><strong>Restaurar copia de seguridade:</strong> Permite seleccionar un ficheiro .zip para restaurar a base de datos. <strong>Atención:</strong> esta acción é destrutiva e substitúe todos os datos actuais polos do arquivo. Recoméndase crear unha copia de seguridade antes de restaurar. Despois de restaurar, é necesario pechar e volver a abrir a aplicación.</P>
 
-        <S>6. Rexistro de eventos</S>
+        <S>6. Administración</S>
+        <P><strong>Base de datos:</strong> Permite configurar a localización do ficheiro de base de datos. Podes seleccionar un ficheiro existente ou crear unha nova localización. Se vas usar a aplicación desde varios equipos, recoméndase gardar a base de datos nunha carpeta compartida na rede.</P>
+        <P><strong>Copias de seguridade:</strong> A sección mostra todas as copias gardadas no sistema. Podes:</P>
+        <P>• <strong>Crear copia:</strong> Fai unha copia da base de datos e gárdaa no directorio de backups da aplicación.</P>
+        <P>• <strong>Exportar:</strong> Garda unha copia nunha localización arbitraria (USB, disco de rede, nube).</P>
+        <P>• <strong>Restaurar:</strong> Recupera os datos desde unha copia gardada. <strong>Atención:</strong> esta acción é destrutiva e substitúe todos os datos actuais.</P>
+        <P>• <strong>Importar externa:</strong> Importa unha copia de seguridade dende unha localización externa (USB, disco de rede).</P>
+        <P>• <strong>Eliminar:</strong> Elimina unha copia de seguridade do sistema. Podes exportala antes de eliminar para gardala noutro lugar.</P>
+        <P>Despois de restaurar, é necesario pechar e volver a abrir a aplicación.</P>
+
+        <S>7. Rexistro de eventos</S>
         <P>Cada acción (crear usuario, crear préstamo, devolver, modificar stock...) queda rexistrada no historial de eventos. Pódese consultar na sección "Rexistro" ou pulsando o botón "Eventos" na barra superior.</P>
       </div>
     </div>
+  );
+}
+
+// ============================================================
+// ADMIN VIEW
+// ============================================================
+function AdminView({ showToast, dbLocation, setDbLocation }) {
+  const [confirmRestore, setConfirmRestore] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [backups, setBackups] = useState([]);
+  const [confirmImport, setConfirmImport] = useState(false);
+
+  useEffect(() => {
+    loadBackups();
+  }, []);
+
+  const loadBackups = async () => {
+    try {
+      const list = await invoke("get_backup_list");
+      setBackups(list);
+    } catch (err) {
+      console.error("Error loading backups:", err);
+    }
+  };
+
+  const handleBackup = async () => {
+    try {
+      const result = await invoke("create_backup");
+      showToast(`Copia creada: ${result.filename}`);
+      loadBackups();
+    } catch (err) { 
+      showToast("Erro: " + err); 
+    }
+  };
+
+  const handleRestoreBackup = async (backupPath) => {
+    try {
+      await invoke("restore_backup", { backupPath });
+      showToast("Datos restaurados! Reinicia a aplicación para ver os cambios.");
+      setConfirmRestore(null);
+    } catch (err) { 
+      showToast("Erro: " + err); 
+      setConfirmRestore(null);
+    }
+  };
+
+  const handleDeleteBackup = async (backupPath) => {
+    try {
+      await invoke("delete_backup", { backupPath });
+      showToast("Copia de seguridade eliminada.");
+      setConfirmDelete(null);
+      loadBackups();
+    } catch (err) { 
+      showToast("Erro: " + err); 
+      setConfirmDelete(null);
+    }
+  };
+
+  const handleExportBackup = async (backupPath, filename) => {
+    try {
+      const destPath = await save({
+        filters: [{ name: "Copia de seguridade (ZIP)", extensions: ["zip"] }],
+        defaultPath: filename
+      });
+      if (destPath) {
+        await invoke("export_backup", { sourcePath: backupPath, destPath });
+        showToast("Copia exportada correctamente!");
+      }
+    } catch (err) { showToast("Erro: " + err); }
+  };
+
+  const handleImportBackup = async () => {
+    try {
+      const filePath = await tauriOpen({
+        filters: [{ name: "Copia de seguridade (ZIP)", extensions: ["zip"] }],
+        multiple: false,
+      });
+      if (filePath) {
+        await invoke("import_backup", { sourcePath: filePath });
+        showToast("Copia importada correctamente!");
+        loadBackups();
+        setConfirmImport(false);
+      }
+    } catch (err) { showToast("Erro: " + err); setConfirmImport(false); }
+  };
+
+  const handleChangeDbLocation = async () => {
+    try {
+      const selected = await tauriOpen({
+        filters: [{ name: "Base de datos", extensions: ["db"] }],
+        multiple: false,
+      });
+      if (selected) {
+        await invoke("set_db_location", { path: selected });
+        setDbLocation(selected);
+        showToast("Localización actualizada! Reinicia a aplicación para usar a nova base de datos.");
+      }
+    } catch (err) { showToast("Erro: " + err); }
+  };
+
+  const handleSelectNewDbLocation = async () => {
+    try {
+      const selected = await save({
+        filters: [{ name: "Base de datos", extensions: ["db"] }],
+        defaultPath: "saf_database.db"
+      });
+      if (selected) {
+        await invoke("set_db_location", { path: selected });
+        setDbLocation(selected);
+        showToast("Localización configurada! Reinicia a aplicación.");
+      }
+    } catch (err) { showToast("Erro: " + err); }
+  };
+
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      {/* Database Location */}
+      <div style={{ background: "#fff", borderRadius: 16, padding: "24px 28px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+          <div style={{ 
+            width: 48, height: 48, borderRadius: 12, background: "linear-gradient(135deg, #E3F2FD, #BBDEFB)",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 
+          }}>🗄️</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 4 }}>Base de datos</div>
+            <div style={{ fontSize: 13, color: "#6a7a8a", marginBottom: 12 }}>Localización do ficheiro de datos</div>
+            <div style={{ 
+              background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 8, 
+              padding: "12px 16px", marginBottom: 16, fontSize: 13, wordBreak: "break-all", 
+              fontFamily: "ui-monospace, SFMono-Regular, Consolas, monospace", color: "#334155" 
+            }}>
+              {dbLocation || "Non configurada"}
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <Btn onClick={handleChangeDbLocation}>📂 Seleccionar existente</Btn>
+              <Btn primary onClick={handleSelectNewDbLocation}>✨ Nova localización</Btn>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Backups */}
+      <div style={{ background: "#fff", borderRadius: 16, padding: "24px 28px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 20 }}>
+          <div style={{ 
+            width: 48, height: 48, borderRadius: 12, background: "linear-gradient(135deg, #E8F5E9, #C8E6C9)",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 
+          }}>💾</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 4 }}>Copias de seguridade</div>
+            <div style={{ fontSize: 13, color: "#6a7a8a" }}>
+              {backups.length} {backups.length === 1 ? "copia gardada" : "copias gardadas"} no sistema
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Btn primary onClick={handleBackup}>+ Crear copia</Btn>
+            <Btn onClick={() => setConfirmImport(true)}>📥 Importar externa</Btn>
+          </div>
+        </div>
+
+        {/* Backup list */}
+        {backups.length === 0 ? (
+          <div style={{ textAlign: "center", padding: 40, color: "#8a96a3", background: "#f8fafc", borderRadius: 12 }}>
+            <span style={{ fontSize: 36 }}>💾</span>
+            <p style={{ marginTop: 12, marginBottom: 0 }}>Non hai copias de seguridade</p>
+            <p style={{ fontSize: 12, marginTop: 4 }}>Pulsa "Crear copia" para facer a primeira copia de seguridade</p>
+          </div>
+        ) : (
+          <div style={{ border: "1px solid #e2e8f0", borderRadius: 12, overflow: "hidden" }}>
+            {backups.map((b, i) => (
+              <div key={i} style={{ 
+                display: "flex", alignItems: "center", justifyContent: "space-between", 
+                padding: "14px 16px", 
+                borderBottom: i < backups.length - 1 ? "1px solid #f0f2f5" : "none",
+                background: confirmRestore === b.path ? "#FFF3E0" : "transparent"
+              }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13 }}>{b.filename}</div>
+                  <div style={{ fontSize: 12, color: "#8a96a3", marginTop: 2 }}>
+                    {(b.size / 1024).toFixed(1)} KB · {new Date(b.created_at).toLocaleString("gl-ES")}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <Btn small onClick={() => handleExportBackup(b.path, b.filename)}>📤 Exportar</Btn>
+                  <Btn small danger onClick={() => setConfirmRestore(b.path)}>🔄 Restaurar</Btn>
+                  <Btn small onClick={() => setConfirmDelete(b)}>🗑️ Eliminar</Btn>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Confirm restore modal */}
+      <Modal open={!!confirmRestore} onClose={() => setConfirmRestore(null)} title="Restaurar copia de seguridade">
+        <div style={{ background: "#FCE4EC", border: "1px solid #EF9A9A", borderRadius: 10, padding: "14px 18px", marginBottom: 16 }}>
+          <div style={{ fontWeight: 700, fontSize: 13, color: "#C62828", marginBottom: 6 }}>⚠️ Atención: esta acción é destrutiva</div>
+          <p style={{ fontSize: 13, color: "#5a6a7a", lineHeight: 1.6, margin: 0 }}>
+            Ao restaurar esta copia, <strong>todos os datos actuais serán substituídos</strong> polos datos do arquivo.
+            Esta acción non se pode desfacer.
+          </p>
+        </div>
+        <p style={{ fontSize: 13, color: "#5a6a7a", lineHeight: 1.6 }}>
+          Despois de restaurar, deberá pechar e volver a abrir a aplicación para que os cambios teñan efecto.
+        </p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 20 }}>
+          <Btn onClick={() => setConfirmRestore(null)}>Cancelar</Btn>
+          <Btn danger onClick={() => handleRestoreBackup(confirmRestore)}>Confirmar restauración</Btn>
+        </div>
+      </Modal>
+
+      {/* Import backup modal */}
+      <Modal open={confirmImport} onClose={() => setConfirmImport(false)} title="Importar copia de seguridade externa">
+        <p style={{ fontSize: 14, color: "#5a6a7a", lineHeight: 1.6, marginBottom: 16 }}>
+          Podes importar unha copia de seguridade que teñas gardada nunha unidade externa (USB, disco de rede, etc.).
+          A copia será importada ao directorio de backups da aplicación.
+        </p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <Btn onClick={() => setConfirmImport(false)}>Cancelar</Btn>
+          <Btn primary onClick={handleImportBackup}>Seleccionar arquivo</Btn>
+        </div>
+      </Modal>
+
+      {/* Delete confirmation modal */}
+      <Modal open={!!confirmDelete} onClose={() => setConfirmDelete(null)} title="Eliminar copia de seguridade">
+        <p style={{ fontSize: 14, color: "#5a6a7a", lineHeight: 1.6, marginBottom: 16 }}>
+          Vas eliminar a copia de seguridade <strong>{confirmDelete?.filename}</strong>.
+        </p>
+        <p style={{ fontSize: 13, color: "#5a6a7a", lineHeight: 1.6 }}>
+          Esta acción non se pode desfacer. Se a copia foi exportada a unha unidade externa, aínda poderás importala de novo.
+        </p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 20 }}>
+          <Btn onClick={() => setConfirmDelete(null)}>Cancelar</Btn>
+          <Btn danger onClick={() => handleDeleteBackup(confirmDelete.path)}>Eliminar</Btn>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+// ============================================================
+// DB CONFIG MODAL (First Run)
+// ============================================================
+function DbConfigModal({ open, onClose, onConfigured, dbLocation, setDbLocation, showToast, isRequired }) {
+  const handleSelectExisting = async () => {
+    try {
+      const selected = await tauriOpen({
+        filters: [{ name: "Base de datos", extensions: ["db"] }],
+        multiple: false,
+      });
+      if (selected) {
+        await invoke("set_db_location", { path: selected });
+        setDbLocation(selected);
+        showToast("Base de datos configurada!");
+        onConfigured();
+      }
+    } catch (err) { showToast("Erro: " + err); }
+  };
+
+  const handleCreateNew = async () => {
+    try {
+      const selected = await save({
+        filters: [{ name: "Base de datos", extensions: ["db"] }],
+        defaultPath: "saf_database.db"
+      });
+      if (selected) {
+        await invoke("set_db_location", { path: selected });
+        setDbLocation(selected);
+        showToast("Nova base de datos configurada!");
+        onConfigured();
+      }
+    } catch (err) { showToast("Erro: " + err); }
+  };
+
+  return (
+    <Modal open={open} onClose={isRequired ? null : onClose} title="Configurar base de datos">
+      {isRequired && (
+        <div style={{ background: "#E3F2FD", border: "1px solid #90CAF9", borderRadius: 10, padding: "14px 18px", marginBottom: 16 }}>
+          <div style={{ fontWeight: 700, fontSize: 13, color: "#1565C0", marginBottom: 6 }}>👋 Benvida/o ao SAF</div>
+          <p style={{ fontSize: 13, color: "#5a6a7a", lineHeight: 1.6, margin: 0 }}>
+            Antes de comezar, necesitas configurar onde se gardarán os datos. 
+            Podes seleccionar unha base de datos existente ou crear unha nova.
+          </p>
+        </div>
+      )}
+      <p style={{ fontSize: 14, color: "#5a6a7a", lineHeight: 1.6, marginBottom: 20 }}>
+        A base de datos almacena toda a información de usuarios, préstamos e inventario.
+        Recoméndase gardala nunha localización de rede se vais usar a aplicación desde varios equipos.
+      </p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <button onClick={handleSelectExisting} style={{
+          padding: 20, borderRadius: 12, border: "2px solid #e8ecf0", background: "#fff",
+          cursor: "pointer", textAlign: "left", fontFamily: "inherit",
+        }}>
+          <div style={{ fontSize: 28, marginBottom: 8 }}>📂</div>
+          <div style={{ fontWeight: 800, fontSize: 14, color: "#1a3a4a" }}>Seleccionar existente</div>
+          <div style={{ fontSize: 12, color: "#8a96a3", marginTop: 4 }}>Usar un ficheiro .db que xa existe</div>
+        </button>
+        <button onClick={handleCreateNew} style={{
+          padding: 20, borderRadius: 12, border: "2px solid #1a6b5a", background: "#eef8f5",
+          cursor: "pointer", textAlign: "left", fontFamily: "inherit",
+        }}>
+          <div style={{ fontSize: 28, marginBottom: 8 }}>✨</div>
+          <div style={{ fontWeight: 800, fontSize: 14, color: "#1a6b5a" }}>Crear nova</div>
+          <div style={{ fontSize: 12, color: "#5a8a7a", marginTop: 4 }}>Crear unha nova base de datos</div>
+        </button>
+      </div>
+    </Modal>
   );
 }
